@@ -18,6 +18,7 @@ local currentFocus = "user"
 local function CleanData(rawData)
     local cleanedData = {}
     for line in rawData:gmatch("([^\n]+)") do
+        -- Captura usuário, senha e rid com regex
         local user, pass, rid = line:match('%d+:%s*"([^"]+)",%s*"([^"]+)",%s*"([^"]+)"')
         if user and pass and rid then
             table.insert(cleanedData, {
@@ -36,12 +37,12 @@ local function CheckCredentials()
     local success, err = pcall(function()
         rawData = game:HttpGet(url)
     end)
-
+    
     if not success then
         warn("Falha ao obter dados:", err)
         return false
     end
-
+    
     cleanedData = CleanData(rawData)
     local currentRID = tostring(LocalPlayer.UserId):lower()
     local cleanUserInput = userInput:gsub("%s+", ""):lower()
@@ -53,7 +54,7 @@ local function CheckCredentials()
             return true
         end
     end
-
+    
     warn("Nenhuma correspondência encontrada")
     return false
 end
@@ -150,43 +151,6 @@ local function CreatePremiumTab()
         })
     end
 end
-
--- 🔓 Mouse começa destravado e tecla V trava/destrava
-local mouseLocked = false
-local UIS = game:GetService("UserInputService")
-local lockKey = Enum.KeyCode.V
-
-UIS.MouseBehavior = Enum.MouseBehavior.Default
-UIS.MouseIconEnabled = true
-
-local function resetCamera()
-    local camera = workspace.CurrentCamera
-    local player = game.Players.LocalPlayer
-    if player and player.Character and player.Character:FindFirstChild("Humanoid") then
-        camera.CameraSubject = player.Character:FindFirstChild("Humanoid")
-        camera.CameraType = Enum.CameraType.Custom
-        camera.CFrame = camera.CFrame * CFrame.new(0, 0, 3)
-    end
-end
-
-local function toggleMouseLock()
-    mouseLocked = not mouseLocked
-    if mouseLocked then
-        UIS.MouseBehavior = Enum.MouseBehavior.LockCenter
-        UIS.MouseIconEnabled = false
-    else
-        UIS.MouseBehavior = Enum.MouseBehavior.Default
-        UIS.MouseIconEnabled = true
-        resetCamera()
-    end
-end
-
-UIS.InputBegan:Connect(function(input, gpe)
-    if gpe then return end
-    if input.KeyCode == lockKey then
-        toggleMouseLock()
-    end
-end)
 
 -- 🔁 Verificação contínua
 spawn(function()
