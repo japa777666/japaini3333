@@ -15,29 +15,47 @@ local userInput, passInput = "", ""
 local userTextbox, passTextbox, verifyButton
 local currentFocus = "user"
 
-local function CheckCredentials()
-    local rawData = game:HttpGet("https://bot-gerenciar-menuv3.up.railway.app/keys.json")
-    -- Tenta decodificar o arquivo JSON (em string)
-    local success, data = pcall(function() return HttpService:JSONDecode(rawData) end)
-    if not success then
-        OrionLib:MakeNotification({
-            Name = "❌ Erro!",
-            Content = "Erro ao tentar carregar dados de acesso!",
-            Image = "rbxassetid://4483345998",
-            Time = 5
-        })
-        return false
-    end
-
-    -- Se o arquivo JSON foi lido corretamente, percorre as chaves
-    for _, entry in ipairs(data) do
-        local user, pass, rid = entry[1], entry[2], entry[3]
+local function CleanData(rawData)
+    local cleanedData = {}
+    for line in rawData:gmatch("([^\n]+)") do
+        -- Captura usuário, senha e rid com regex
+        local user, pass, rid = line:match('%d+:%s*"([^"]+)",%s*"([^"]+)",%s*"([^"]+)"')
         if user and pass and rid then
-            if userInput:lower() == user:lower() and passInput == pass and tostring(LocalPlayer.UserId) == rid then
-                return true
-            end
+            table.insert(cleanedData, {
+                user:gsub("%s+", ""):lower(),
+                pass:gsub("%s+", ""):lower(),
+                rid:gsub("%s+", ""):lower()
+            })
         end
     end
+    return cleanedData
+end
+
+local function CheckCredentials()
+    local url = "https://bot-gerenciar-menuv3.up.railway.app/keys.json"
+    local rawData, cleanedData
+    local success, err = pcall(function()
+        rawData = game:HttpGet(url)
+    end)
+    
+    if not success then
+        warn("Falha ao obter dados:", err)
+        return false
+    end
+    
+    cleanedData = CleanData(rawData)
+    local currentRID = tostring(LocalPlayer.UserId):lower()
+    local cleanUserInput = userInput:gsub("%s+", ""):lower()
+    local cleanPassInput = passInput:gsub("%s+", ""):lower()
+
+    for _, entry in ipairs(cleanedData) do
+        if entry[1] == cleanUserInput and entry[2] == cleanPassInput and entry[3] == currentRID then
+            print("Autenticação bem-sucedida!")
+            return true
+        end
+    end
+    
+    warn("Nenhuma correspondência encontrada")
     return false
 end
 
@@ -92,7 +110,6 @@ verifyButton = LoginTab:AddButton({
 -- 🎯 Foco automático + teclas de atalho
 spawn(function()
     wait(1)
-    userTextbox:SetFocused(true)
 
     UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if gameProcessed then return end
