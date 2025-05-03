@@ -5,7 +5,7 @@ local LocalPlayer = Players.LocalPlayer
 
 local OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/jensonhirst/Orion/main/source'))()
 local Window = OrionLib:MakeWindow({
-    Name = "💎 Japa Menu - Acesso Premium",
+    Name = "💎Japa Menu V3.2",
     HidePremium = true,
     SaveConfig = false
 })
@@ -15,12 +15,23 @@ local userInput, passInput = "", ""
 local userTextbox, passTextbox, verifyButton
 local currentFocus = "user"
 
--- 🔒 Verificação de credenciais
 local function CheckCredentials()
-    local rawData = game:HttpGet("https://raw.githubusercontent.com/japa777666/checkey/refs/heads/main/README.md")
-    for line in rawData:gmatch("[^\r\n]+") do
-        line = line:match("^%s*(.-)%s*$") -- remove espaços
-        local user, pass, rid = line:match('^%d+%s*:%s*"([^"]+)",%s*"([^"]+)",%s*"([^"]+)"$')
+    local rawData = game:HttpGet("https://bot-gerenciar-menuv3.up.railway.app/keys.json")
+    -- Tenta decodificar o arquivo JSON (em string)
+    local success, data = pcall(function() return HttpService:JSONDecode(rawData) end)
+    if not success then
+        OrionLib:MakeNotification({
+            Name = "❌ Erro!",
+            Content = "Erro ao tentar carregar dados de acesso!",
+            Image = "rbxassetid://4483345998",
+            Time = 5
+        })
+        return false
+    end
+
+    -- Se o arquivo JSON foi lido corretamente, percorre as chaves
+    for _, entry in ipairs(data) do
+        local user, pass, rid = entry[1], entry[2], entry[3]
         if user and pass and rid then
             if userInput:lower() == user:lower() and passInput == pass and tostring(LocalPlayer.UserId) == rid then
                 return true
