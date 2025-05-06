@@ -151,7 +151,7 @@ local function CreatePremiumTab()
     if isPremium then
         local PrivateTab = Window:MakeTab({
             Name = "🌟 Privada",
-            Icon = "rbxassetid://4483345998",
+            Icon = "rbxassetid://",
             PremiumOnly = false
         })
 
