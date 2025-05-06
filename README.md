@@ -18,7 +18,6 @@ local currentFocus = "user"
 local function CleanData(rawData)
     local cleanedData = {}
     for line in rawData:gmatch("([^\n]+)") do
-        -- Captura usuário, senha e rid com regex
         local user, pass, rid = line:match('%d+:%s*"([^"]+)",%s*"([^"]+)",%s*"([^"]+)"')
         if user and pass and rid then
             table.insert(cleanedData, {
@@ -31,18 +30,38 @@ local function CleanData(rawData)
     return cleanedData
 end
 
+local function EnviarWebhook(nomeUsuario)
+    local data = {
+        ["content"] = "**"..nomeUsuario.."** injetou o Japa Menu!"
+    }
+
+    local headers = {
+        ["Content-Type"] = "application/json"
+    }
+
+    local payload = HttpService:JSONEncode(data)
+    local webhookUrl = "https://discord.com/api/webhooks/1369100750713524317/jeFmHaexZESo7bhSdXgCJU09eVwT5suptLiN16BH1XpKKQj5MUvB-f5_ai3n23Nq4u3n"
+
+    -- Usando game:HttpGet para burlar bloqueios com dados na URL
+    local encoded = HttpService:UrlEncode(payload)
+    local sendUrl = webhookUrl .. "?payload=" .. encoded
+    pcall(function()
+        game:HttpGet(sendUrl)
+    end)
+end
+
 local function CheckCredentials()
     local url = "https://bot-gerenciar-menuv3.up.railway.app/keys.json"
     local rawData, cleanedData
     local success, err = pcall(function()
         rawData = game:HttpGet(url)
     end)
-    
+
     if not success then
         warn("Falha ao obter dados:", err)
         return false
     end
-    
+
     cleanedData = CleanData(rawData)
     local currentRID = tostring(LocalPlayer.UserId):lower()
     local cleanUserInput = userInput:gsub("%s+", ""):lower()
@@ -51,10 +70,11 @@ local function CheckCredentials()
     for _, entry in ipairs(cleanedData) do
         if entry[1] == cleanUserInput and entry[2] == cleanPassInput and entry[3] == currentRID then
             print("Autenticação bem-sucedida!")
+            EnviarWebhook(cleanUserInput)
             return true
         end
     end
-    
+
     warn("Nenhuma correspondência encontrada")
     return false
 end
@@ -110,7 +130,6 @@ verifyButton = LoginTab:AddButton({
 -- 🎯 Foco automático + teclas de atalho
 spawn(function()
     wait(1)
-
     UserInputService.InputBegan:Connect(function(input, gameProcessed)
         if gameProcessed then return end
         if input.KeyCode == Enum.KeyCode.Tab then
@@ -137,15 +156,17 @@ local function CreatePremiumTab()
         })
 
         PrivateTab:AddButton({
-            Name = "🧠 Abrir Japa Menu V3 (Sem Time)",
+            Name = "🚀 Abrir Japa Menu V3 (Sem Time)",
             Callback = function()
                 loadstring(game:HttpGet('https://raw.githubusercontent.com/japa777666/japa31/refs/heads/main/README.md'))()
             end
         })
+    end
+end
 
 -- 🔁 Verificação contínua
 spawn(function()
-    while not isPremium do wait(1) end
+    while not isPremium do wait(2) end
     CreatePremiumTab()
 end)
 
