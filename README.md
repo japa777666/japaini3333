@@ -137,24 +137,15 @@ local function CreatePremiumTab()
         })
 
         PrivateTab:AddButton({
-            Name = "🚀 Abrir Japa Menu V3 (Sem Time)",
+            Name = "🧠 Abrir Japa Menu V3 (Sem Time)",
             Callback = function()
                 loadstring(game:HttpGet('https://raw.githubusercontent.com/japa777666/japa31/refs/heads/main/README.md'))()
             end
         })
 
-        PrivateTab:AddButton({
-            Name = "🧠 Abrir Japa Menu V2",
-            Callback = function()
-                loadstring(game:HttpGet('https://raw.githubusercontent.com/japa777666/JapaHubIni/refs/heads/main/README.md'))()
-            end
-        })
-    end
-end
-
 -- 🔁 Verificação contínua
 spawn(function()
-    while not isPremium do wait(2) end
+    while not isPremium do wait(1) end
     CreatePremiumTab()
 end)
 
