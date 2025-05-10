@@ -5,7 +5,7 @@ local LocalPlayer = Players.LocalPlayer
 
 local OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/jensonhirst/Orion/main/source'))()
 local Window = OrionLib:MakeWindow({
-    Name = "💎Japa Menu V3.2",
+    Name = "💎Japa Menu V3.3",
     HidePremium = true,
     SaveConfig = false
 })
