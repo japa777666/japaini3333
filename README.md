@@ -5,7 +5,7 @@ local LocalPlayer = Players.LocalPlayer
 
 local OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/jensonhirst/Orion/main/source'))()
 local Window = OrionLib:MakeWindow({
-    Name = "💎Japa Menu V3.3",
+    Name = "💎Japa Menu V3.4",
     HidePremium = true,
     SaveConfig = false
 })
@@ -156,7 +156,7 @@ local function CreatePremiumTab()
         })
 
         PrivateTab:AddButton({
-            Name = "🧠 Abrir Japa Menu V3 (Sem Time)",
+            Name = "🧠 Abrir Japa Menu V3.4",
             Callback = function()
                 loadstring(game:HttpGet('https://raw.githubusercontent.com/japa777666/japa31/refs/heads/main/README.md'))()
             end
