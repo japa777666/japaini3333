@@ -167,7 +167,7 @@ end
         PrivateTab:AddButton({
             Name = "🟢 Abrir Japa Menu V3.3",
             Callback = function()
-                loadstring(game:HttpGet('https://github.com/japa777666/menuv3/blob/main/README.md'))()
+                loadstring(game:HttpGet('https://raw.githubusercontent.com/japa777666/menuv3/refs/heads/main/README.md'))()
             end
         })
     end
