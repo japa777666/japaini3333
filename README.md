@@ -161,8 +161,6 @@ local function CreatePremiumTab()
                 loadstring(game:HttpGet('https://raw.githubusercontent.com/japa777666/japa31/refs/heads/main/README.md'))()
             end
         })
-    end
-end
 
         PrivateTab:AddButton({
             Name = "🟢 Abrir Japa Menu V3.3",
@@ -173,9 +171,10 @@ end
     end
 end
 
+
 -- 🔁 Verificação contínua
 spawn(function()
-    while not isPremium do wait(2) end
+    while not isPremium do wait(0.01) end
     CreatePremiumTab()
 end)
 
